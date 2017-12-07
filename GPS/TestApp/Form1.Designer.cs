@@ -28,16 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint1 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 30D);
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.messageList = new System.Windows.Forms.ListBox();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.listBoxSat = new System.Windows.Forms.ListBox();
             this.propertyGridSat = new System.Windows.Forms.PropertyGrid();
+            this.chartSatelist = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chartSky = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            ((System.ComponentModel.ISupportInitialize)(this.chartSatelist)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartSky)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -73,74 +80,87 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(28, 80);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(221, 381);
+            this.listBox1.Size = new System.Drawing.Size(221, 537);
             this.listBox1.TabIndex = 3;
-            // 
-            // messageList
-            // 
-            this.messageList.FormattingEnabled = true;
-            this.messageList.Location = new System.Drawing.Point(778, 12);
-            this.messageList.Name = "messageList";
-            this.messageList.Size = new System.Drawing.Size(220, 134);
-            this.messageList.TabIndex = 4;
-            this.messageList.SelectedIndexChanged += new System.EventHandler(this.messageList_SelectedIndexChanged);
-            // 
-            // propertyGrid1
-            // 
-            this.propertyGrid1.LineColor = System.Drawing.SystemColors.ControlDark;
-            this.propertyGrid1.Location = new System.Drawing.Point(778, 171);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(220, 290);
-            this.propertyGrid1.TabIndex = 5;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(505, 438);
+            this.button3.Location = new System.Drawing.Point(326, 26);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 6;
             this.button3.Text = "Write to log";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(603, 438);
+            this.button4.Location = new System.Drawing.Point(407, 26);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 7;
             this.button4.Text = "Stop writing";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // listBoxSat
-            // 
-            this.listBoxSat.FormattingEnabled = true;
-            this.listBoxSat.Location = new System.Drawing.Point(291, 80);
-            this.listBoxSat.Name = "listBoxSat";
-            this.listBoxSat.Size = new System.Drawing.Size(86, 199);
-            this.listBoxSat.TabIndex = 8;
-            this.listBoxSat.SelectedIndexChanged += new System.EventHandler(this.listBoxSat_SelectedIndexChanged);
             // 
             // propertyGridSat
             // 
             this.propertyGridSat.LineColor = System.Drawing.SystemColors.ControlDark;
-            this.propertyGridSat.Location = new System.Drawing.Point(427, 69);
+            this.propertyGridSat.Location = new System.Drawing.Point(847, 78);
             this.propertyGridSat.Name = "propertyGridSat";
-            this.propertyGridSat.Size = new System.Drawing.Size(203, 267);
+            this.propertyGridSat.Size = new System.Drawing.Size(163, 387);
             this.propertyGridSat.TabIndex = 9;
+            // 
+            // chartSatelist
+            // 
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            this.chartSatelist.ChartAreas.Add(chartArea1);
+            this.chartSatelist.Location = new System.Drawing.Point(255, 471);
+            this.chartSatelist.Name = "chartSatelist";
+            series1.ChartArea = "ChartArea1";
+            series1.IsVisibleInLegend = false;
+            series1.Name = "Series1";
+            dataPoint1.IsValueShownAsLabel = false;
+            dataPoint1.Label = "aaa";
+            dataPoint1.LabelAngle = 90;
+            series1.Points.Add(dataPoint1);
+            this.chartSatelist.Series.Add(series1);
+            this.chartSatelist.Size = new System.Drawing.Size(743, 142);
+            this.chartSatelist.TabIndex = 10;
+            this.chartSatelist.Text = "chart1";
+            this.chartSatelist.Click += new System.EventHandler(this.chartSatelist_Click);
+            this.chartSatelist.MouseClick += new System.Windows.Forms.MouseEventHandler(this.chartSatelist_MouseClick);
+            // 
+            // chartSky
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.chartSky.ChartAreas.Add(chartArea2);
+            legend1.Enabled = false;
+            legend1.Name = "Legend1";
+            this.chartSky.Legends.Add(legend1);
+            this.chartSky.Location = new System.Drawing.Point(255, 78);
+            this.chartSky.Name = "chartSky";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series2.Legend = "Legend1";
+            series2.MarkerColor = System.Drawing.Color.Red;
+            series2.MarkerSize = 20;
+            series2.Name = "Series1";
+            this.chartSky.Series.Add(series2);
+            this.chartSky.Size = new System.Drawing.Size(398, 387);
+            this.chartSky.TabIndex = 11;
+            this.chartSky.Text = "chart1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1010, 468);
+            this.ClientSize = new System.Drawing.Size(1010, 625);
+            this.Controls.Add(this.chartSky);
+            this.Controls.Add(this.chartSatelist);
             this.Controls.Add(this.propertyGridSat);
-            this.Controls.Add(this.listBoxSat);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.propertyGrid1);
-            this.Controls.Add(this.messageList);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -148,6 +168,8 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.chartSatelist)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartSky)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -158,12 +180,11 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ListBox messageList;
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.ListBox listBoxSat;
         private System.Windows.Forms.PropertyGrid propertyGridSat;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartSatelist;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartSky;
     }
 }
 

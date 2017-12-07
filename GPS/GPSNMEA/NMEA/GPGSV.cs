@@ -126,7 +126,12 @@ namespace RTP.GPS.Nmea
 				return SatelliteSystem.Unknown;
 			}
 		}
-	}
+        public override string ToString()
+        {
+            return PrnNumber.ToString();
+        }
+
+    }
 
 	/// <summary>
 	/// Satellite system
