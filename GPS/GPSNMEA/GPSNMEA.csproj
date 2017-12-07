@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GnsDevice.cs" />
     <Compile Include="IMultiPartMessage.cs" />
     <Compile Include="NmeaDevice.cs" />
     <Compile Include="NmeaMessage.cs" />
