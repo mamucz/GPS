@@ -84,9 +84,11 @@ namespace RTP.GPS.Nmea
 				Vdop = tmp;
 			else
 				Vdop = double.NaN;
-		}
 
-		/// <summary>
+            
+        }
+
+        /// <summary>
 		/// Mode
 		/// </summary>
 		public ModeSelection GpsMode { get; private set; }

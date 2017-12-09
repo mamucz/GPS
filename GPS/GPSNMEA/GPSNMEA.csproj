@@ -45,6 +45,7 @@
     <Compile Include="IMultiPartMessage.cs" />
     <Compile Include="NmeaDevice.cs" />
     <Compile Include="NmeaMessage.cs" />
+    <Compile Include="NMEA\GNVTG.cs" />
     <Compile Include="NMEA\GPBOD.cs" />
     <Compile Include="NMEA\GPGGA.cs" />
     <Compile Include="NMEA\GPGLL.cs" />
