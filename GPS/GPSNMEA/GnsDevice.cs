@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -15,28 +16,88 @@ namespace RTP.GPS.Nmea
         /// <summary>
 		/// Latitude
 		/// </summary>
+        [CategoryAttribute("Navigation"), DescriptionAttribute("Latitude [degree]")]
 		public double Latitude { get; private set; }
 
         /// <summary>
         /// Longitude
         /// </summary>
+        [CategoryAttribute("Navigation"), DescriptionAttribute("Longitude [degree]")]   
         public double Longitude { get; private set; }
 
         /// <summary>
         /// Fix Quality
         /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Navidation fix quality [degree]")]
         public FixQuality Quality { get; private set; }
 
         /// <summary>
         /// Number of satellites being tracked
         /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Satelits used for navigation data")]
         public int NumberOfSatellites { get; private set; }
 
         /// <summary>
 		/// Altitude
 		/// </summary>
-		public double Altitude { get; private set; }
+        [CategoryAttribute("Navigation"), DescriptionAttribute("Altitude [meters]")]
+        public double Altitude { get; private set; }
 
+        /// <summary>
+        /// Course over ground true
+        /// </summary>
+        [CategoryAttribute("Motion"), DescriptionAttribute("Course over ground [true]")]
+        public double COGT { get; private set; }
+
+        /// <summary>
+        /// Course over ground magnetic
+        /// </summary>
+        [CategoryAttribute("Motion"), DescriptionAttribute("Course over ground [magnwtic]")]
+        public double COGM { get; private set; }
+
+        /// <summary>
+        /// Speed over ground [m/s]
+        /// </summary>
+        [CategoryAttribute("Motion"), DescriptionAttribute("Speed over ground [meter per seconds]")]
+        public double SOG { get; private set; }
+
+        /// <summary>
+        /// Mode indicator
+        /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Motion fix type")]
+        public Gnvtg.MovingModeMeasureType ModeIndicator { get; private set; }
+
+        /// <summary>
+		/// Time of day fix was taken
+		/// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Last time of fix")]
+        public TimeSpan FixTime { get; private set; }
+
+
+        /// <summary>
+        /// Dilution of precision
+        /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Dilution of precision")]
+        public double Pdop { get; private set; }
+
+        /// <summary>
+        /// Horizontal dilution of precision
+        /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Horizontal of precision"),]
+        public double Hdop { get; private set; }
+
+        /// <summary>
+        /// Vertical dilution of precision
+        /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Vertical of precision")]
+        public double Vdop { get; private set; }
+
+        public enum Commands
+        {
+            HotStart,
+            WarmStart,
+            ColdStart,
+        }
 
         private SerialPort port;
         private StreamReader filestream;
@@ -83,6 +144,9 @@ namespace RTP.GPS.Nmea
 
         public delegate void NavigationDataUpdatedEventHandler(Gpgga message);
         public event NavigationDataUpdatedEventHandler NavigationDataUpdated;
+
+        public delegate void MovingDataUpdatedEventHandler(Gnvtg message);
+        public event MovingDataUpdatedEventHandler MovingDataUpdated;
 
         public delegate void DeviceMessageReceivedDelegate(object sender, NmeaMessageReceivedEventArgs e);
 
@@ -174,8 +238,13 @@ namespace RTP.GPS.Nmea
             OnReceiveRawNmeaMessage(message);
             if (message.GetType() == typeof(Gpgga))
                 OnNavigationDataUpdated((Gpgga)message);
+            if (message.GetType() == typeof(Gnvtg))
+                OnMotionDataUpdated((Gnvtg)message);
             if (message.MessageType == "GNGSA")
             {
+                Hdop = ((Gpgsa)message).Hdop;
+                Pdop = ((Gpgsa)message).Pdop;
+                Vdop = ((Gpgsa)message).Vdop;
                 if (GSACounter == 0)
                     ActiveStelits.Clear(); 
                 GSACounter++;
@@ -301,9 +370,41 @@ namespace RTP.GPS.Nmea
             Quality = message.Quality;
             NumberOfSatellites = message.NumberOfSatellites;
             Altitude = message.Altitude;
+            FixTime = message.FixTime;
             
             if (NavigationDataUpdated != null)
                 NavigationDataUpdated(message);
+        }
+
+        private void OnMotionDataUpdated(Gnvtg message)
+        {
+            COGT = message.COGT;
+            COGM = message.COGM;
+            SOG = message.SOG;
+            ModeIndicator = message.ModeIndicator;
+   
+            if (MovingDataUpdated != null)
+                MovingDataUpdated(message);
+        }
+        public void GetCommandCheckSums(string message, ref byte CK_A, ref byte CK_B)
+        {
+            CK_A = 0;
+            CK_B = 0;
+            byte[] buff = Encoding.ASCII.GetBytes(message);
+            for (int i = 0; i < message.Count(); i++)
+            {
+                CK_A = CK_A + buff[i];
+                CK_B = CK_B + CK_A
+            }
+        }
+            
+
+ 
+    public void SendCommand(Commands command)
+        {
+            string scmd;
+            if (command == Commands.HotStart)
+                scmd = "!UBX CFG-RST 181 98 6 4 0 0 1 0"; +CK_A, CK_B //message 6 4 0 0 1 0
         }
 
         public void Dispose()

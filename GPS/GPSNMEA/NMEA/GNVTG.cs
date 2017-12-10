@@ -13,9 +13,9 @@ namespace RTP.GPS.Nmea
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Gpbod")]
     [NmeaMessageType("GNVTG")]
-    class GNVTG : NmeaMessage
+    public class Gnvtg : NmeaMessage
     {
-        public enum ModeType
+        public enum MovingModeMeasureType
         {
             Autonomous,
             Differential,
@@ -53,19 +53,19 @@ namespace RTP.GPS.Nmea
             switch (message[8])
             {
                 case "A":
-                    ModeIndicator = ModeType.Autonomous; 
+                    ModeIndicator = MovingModeMeasureType.Autonomous; 
                     break;
                 case "D":
-                    ModeIndicator = ModeType.Differential;
+                    ModeIndicator = MovingModeMeasureType.Differential;
                     break;
                 case "E":
-                    ModeIndicator = ModeType.DeadReckoning;
+                    ModeIndicator = MovingModeMeasureType.DeadReckoning;
                     break;
                 case "N":
-                    ModeIndicator = ModeType.None;
+                    ModeIndicator = MovingModeMeasureType.None;
                     break;
                 default:
-                    ModeIndicator = ModeType.Unknown;
+                    ModeIndicator = MovingModeMeasureType.Unknown;
                     break;
 
             }
@@ -90,6 +90,6 @@ namespace RTP.GPS.Nmea
         /// <summary>
         /// Mode indicator
         /// </summary>
-        public ModeType ModeIndicator { get; private set; }
+        public MovingModeMeasureType ModeIndicator { get; private set; }
     }
 }
