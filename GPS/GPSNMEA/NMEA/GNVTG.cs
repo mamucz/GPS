@@ -46,7 +46,7 @@ namespace RTP.GPS.Nmea
                 COGM = double.NaN;
 
             if (double.TryParse(message[6], NumberStyles.Float, CultureInfo.InvariantCulture, out tmp))
-                SOG = tmp/3600.0f;
+                SOG = tmp;
             else
                 SOG = double.NaN;
 

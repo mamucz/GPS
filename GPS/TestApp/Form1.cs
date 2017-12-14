@@ -92,7 +92,7 @@ namespace TestApp
 
         private void Gns_NewUnknownMessageTypeReceived(NmeaMessage newMessage)
         {
-            listBoxUnknownMessages.Items.Add(new MessageItem { message = newMessage });
+            listBoxUnknownMessages.Items.Add(newMessage.ToString());
         }
 
         private void Gns_NewMessageTypeReceived(NmeaMessage newMessage)
@@ -132,6 +132,7 @@ namespace TestApp
         private void Gns_LostSatelitsInView(List<SatelliteVehicle> satelits)
         {
             List<DataPoint> remove = new List<DataPoint>();
+            List<DataPoint> removesky = new List<DataPoint>();
 
             foreach (var sat in satelits)
             { 
@@ -139,9 +140,16 @@ namespace TestApp
                 DataPoint dp = chartSatelist.Series[0].Points.FirstOrDefault(x => ((SatelliteVehicle)x.Tag).PrnNumber == sat.PrnNumber);
                 if (dp != null)
                     remove.Add(dp);
+               dp = chartSky.Series[0].Points.FirstOrDefault(x => ((SatelliteVehicle)x.Tag).PrnNumber == sat.PrnNumber);
+                if (dp != null)
+                    removesky.Add(dp);
+
+
             }
             foreach (var dp in remove)
                 chartSatelist.Series[0].Points.Remove(dp);
+            foreach (var dp in removesky)
+                chartSky.Series[0].Points.Remove(dp);
 
         }
 
@@ -268,6 +276,21 @@ namespace TestApp
         {
             if (listBoxMessages.SelectedItem !=null)
                 propertyGridSat.SelectedObject = ((MessageItem)listBoxMessages.SelectedItem).message;
+        }
+        
+        private void button5_Click(object sender, EventArgs e)
+        {
+            gns.SendCommand(GnsDevice.Commands.HotStart);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            gns.SendCommand(GnsDevice.Commands.WarmStart);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            gns.SendCommand(GnsDevice.Commands.ColdStart);
         }
     }
 }

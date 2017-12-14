@@ -29,7 +29,7 @@ namespace RTP.GPS.Nmea
         /// Fix Quality
         /// </summary>
         [CategoryAttribute("Fix"), DescriptionAttribute("Navidation fix quality [degree]")]
-        public FixQuality Quality { get; private set; }
+        public FixQuality FixQuality { get; private set; }
 
         /// <summary>
         /// Number of satellites being tracked
@@ -91,6 +91,12 @@ namespace RTP.GPS.Nmea
         /// </summary>
         [CategoryAttribute("Fix"), DescriptionAttribute("Vertical of precision")]
         public double Vdop { get; private set; }
+
+        /// <summary>
+        /// Mode
+        /// </summary>
+        [CategoryAttribute("Fix"), DescriptionAttribute("Fix mode")]
+        public Gpgsa.Mode FixMode { get; private set; }
 
         public enum Commands
         {
@@ -288,6 +294,7 @@ namespace RTP.GPS.Nmea
 
         void ProcessGSA(Gpgsa gpgsa)
         {
+            FixMode = gpgsa.FixMode;
             ActiveStelits.AddRange(gpgsa.SVs);
         }
 
@@ -367,7 +374,7 @@ namespace RTP.GPS.Nmea
         {
             Latitude = message.Latitude;
             Longitude = message.Longitude;
-            Quality = message.Quality;
+            FixQuality = message.Quality;
             NumberOfSatellites = message.NumberOfSatellites;
             Altitude = message.Altitude;
             FixTime = message.FixTime;
@@ -386,25 +393,50 @@ namespace RTP.GPS.Nmea
             if (MovingDataUpdated != null)
                 MovingDataUpdated(message);
         }
-        public void GetCommandCheckSums(string message, ref byte CK_A, ref byte CK_B)
+
+        private void GetCommandCheckSums(byte[] buff, ref byte CK_A, ref byte CK_B)
         {
             CK_A = 0;
             CK_B = 0;
-            byte[] buff = Encoding.ASCII.GetBytes(message);
-            for (int i = 0; i < message.Count(); i++)
+            for (int i = 0; i < buff.Count(); i++)
             {
-                CK_A = CK_A + buff[i];
-                CK_B = CK_B + CK_A
+                CK_A = (byte)(CK_A + buff[i]);
+                CK_B = (byte)(CK_B + CK_A);
             }
         }
             
-
- 
-    public void SendCommand(Commands command)
+        private byte[] BuildCommand(byte Class, byte ID, byte[] payload)
         {
-            string scmd;
+            byte[] body = new byte[payload.Length + 4];
+            body[0] = Class;
+            body[1] = ID;
+            body[2] = (byte)payload.Length;
+            body[3] = 0;
+
+            payload.CopyTo(body, 4); 
+            byte CK_A= 0;
+            byte CK_B=0;
+            GetCommandCheckSums(body, ref CK_A, ref CK_B);
+            byte[] cmd = new byte[body.Length + 4];
+            cmd[0] = 181;
+            cmd[1] = 98;
+            body.CopyTo(cmd, 2);
+            cmd[cmd.Length - 2] = CK_A;
+            cmd[cmd.Length - 1] = CK_B;
+            return cmd;
+        }
+
+        public void SendCommand(Commands command)
+        {
+            byte[] scmd = null;
             if (command == Commands.HotStart)
-                scmd = "!UBX CFG-RST 181 98 6 4 0 0 1 0"; +CK_A, CK_B //message 6 4 0 0 1 0
+                scmd = BuildCommand(6, 4, new byte[] {0,0,2,0 });
+            if (command == Commands.WarmStart)
+                scmd = BuildCommand(6, 4, new byte[] { 0, 1, 2, 0 });
+            if (command == Commands.ColdStart)
+                scmd = BuildCommand(6, 4, new byte[] { 0xFF, 0xFF, 2, 0 });
+            ((SerialPortDevice)device).Write(scmd, 0, scmd.Length);
+            //    B5 62 06 04 04 00 00 00 02 00 10 68
         }
 
         public void Dispose()
